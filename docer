@@ -1,21 +1,22 @@
-# Use an official Python image as the base
+# Use an official Python runtime as a base image
 FROM python:3.9-slim
 
 # Install FFmpeg
-RUN apt update && apt install -y ffmpeg
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    apt-get clean
 
 # Set the working directory
 WORKDIR /app
 
-# Copy requirements file and install dependencies
-COPY requirements.txt requirements.txt
+# Copy the current directory contents into the container at /app
+COPY . /app
+
+# Install any dependencies
 RUN pip install -r requirements.txt
 
-# Copy the rest of the application code
-COPY . .
-
-# Expose port 5000
+# Expose port 5000 (Render will use this to map to the external port)
 EXPOSE 5000
 
-# Start the Flask app
+# Command to run the Flask app
 CMD ["python", "app.py"]
